@@ -115,8 +115,12 @@ abstract class _BaseRules {
   static final Rule defaultRule =
       Rule('default', filters: ['default'], replacement: (content, node) {
     return content.isEmpty
-      ? node.isBlock ? '\n\n' : ''
-      : node.isBlock ? '\n\n' + content + '\n\n' : content;
+        ? node.isBlock
+            ? '\n\n'
+            : ''
+        : node.isBlock
+            ? '\n\n' + content + '\n\n'
+            : content;
   });
 
   static Rule buildIgnoreRule(List<String> names) {
@@ -263,7 +267,7 @@ abstract class _CommonRules {
     var href = node.getAttribute('href');
     var title = node.getAttribute('title') ?? '';
     var renderedTitle = title.isEmpty ? title : ' "$title"';
-    var result, reference;
+    String result, reference;
     switch (getStyleOption('linkReferenceStyle')) {
       case 'collapsed':
         result = '[' + content + '][]';
@@ -349,54 +353,55 @@ abstract class _CommonRules {
 /// Copyright (c) 2017+ Dom Christie, guyplusplus
 abstract class _TableRules {
   static final Rule tableCell = Rule('tableCell',
-    filters: ['th', 'td'],
-    replacement: (content, node) => cell(content, node) + spannedCells(node, ''));
+      filters: ['th', 'td'],
+      replacement: (content, node) =>
+          cell(content, node) + spannedCells(node, ''));
 
-  static final Rule tableRow = Rule('tableRow',
-    filters: ['tr'],
-    replacement: (content, node) {
-      var borderCells = '';
-      final alignMap = { 'left': ':--', 'right': '--:', 'center': ':-:' };
+  static final Rule tableRow =
+      Rule('tableRow', filters: ['tr'], replacement: (content, node) {
+    var borderCells = '';
+    final alignMap = {'left': ':--', 'right': '--:', 'center': ':-:'};
 
-      if (isHeadingRow(node)) {
-        for (var child in node.childNodes()) {
-          var border = '---';
-          var align = (child.getAttribute('align') ?? '').toLowerCase();
+    if (isHeadingRow(node)) {
+      for (var child in node.childNodes()) {
+        var border = '---';
+        var align = (child.getAttribute('align') ?? '').toLowerCase();
 
-          if (align.isNotEmpty) border = alignMap[align] ?? border;
-          borderCells += cell(border, child) + spannedCells(child, border);
-        }
+        if (align.isNotEmpty) border = alignMap[align] ?? border;
+        borderCells += cell(border, child) + spannedCells(child, border);
       }
-      return '\n$content' + (borderCells.isNotEmpty ? '\n$borderCells' : '');
-    });
+    }
+    return '\n$content' + (borderCells.isNotEmpty ? '\n$borderCells' : '');
+  });
 
-  static final Rule table = Rule('table',
-    filters: ['table'],
-    replacement: (content, node) {
-      if (isNestedTable(node)) return '  ${node.outerHTML}  ';
-      // Ensure there are no blank lines
-      content = content.replaceAll('\n\n', '\n');
-      return '\n\n$content\n\n';
-    });
+  static final Rule table =
+      Rule('table', filters: ['table'], replacement: (content, node) {
+    if (isNestedTable(node)) return '  ${node.outerHTML}  ';
+    // Ensure there are no blank lines
+    content = content.replaceAll('\n\n', '\n');
+    return '\n\n$content\n\n';
+  });
 
   static final Rule tableSection = Rule('tableSection',
-    filters: ['thead', 'tbody', 'tfoot'],
-    replacement: (content, node) => content);
+      filters: ['thead', 'tbody', 'tfoot'],
+      replacement: (content, node) => content);
 
   static final Rule captionSection = Rule('captionSection',
-    filters: ['caption'],
-    replacement: (content, node) {
-      if (node.parentElName == 'table' && node.isParentFirstChild) return content;
-      return '';
-    });
+      filters: ['caption'], replacement: (content, node) {
+    if (node.parentElName == 'table' && node.isParentFirstChild) return content;
+    return '';
+  });
 
   static bool isHeadingRow(Node tr) {
     final parentNode = tr.parentElName;
     var tableNode = tr.asElement()?.parent;
-    if (parentNode == 'thead' || parentNode == 'tfoot' || parentNode == 'tbody') {
+    if (parentNode == 'thead' ||
+        parentNode == 'tfoot' ||
+        parentNode == 'tbody') {
       tableNode = tableNode?.parent;
     }
-    return tableNode?.localName == 'table' && tableNode?.querySelector('tr:first-child') == tr.asElement();
+    return tableNode?.localName == 'table' &&
+        tableNode?.querySelector('tr:first-child') == tr.asElement();
     // TODO: not perfect, but works for now
   }
 

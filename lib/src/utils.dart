@@ -89,9 +89,9 @@ bool isVoid(dom.Node? node) {
 dom.Node? nextSibling(dom.Node node) {
   if (node.parentNode == null) return null;
   var siblings = node.parentNode!.nodes;
-  for (var i = siblings.indexOf(node) + 1; i < siblings.length; i++) {
-    var s = siblings[i];
-    return s;
+  var index = siblings.indexOf(node);
+  if (index >= 0 && index < siblings.length - 1) {
+    return siblings[index + 1];
   }
   return null;
 }
@@ -99,11 +99,11 @@ dom.Node? nextSibling(dom.Node node) {
 int countSiblingEl(dom.Node node) {
   if (node.parentNode == null) return 0;
   var count = 0;
-  node.parentNode!.nodes.forEach((node) {
+  for (var node in node.parentNode!.nodes) {
     if (node is dom.Element) {
       count++;
     }
-  });
+  }
   return count;
 }
 
@@ -115,9 +115,9 @@ dom.Node prepareRoot(dom.Node rootNode) {
 dom.Node? previousSibling(dom.Node node) {
   if (node.parentNode == null) return null;
   var siblings = node.parentNode!.nodes;
-  for (var i = siblings.indexOf(node) - 1; i >= 0; i--) {
-    var s = siblings[i];
-    return s;
+  var index = siblings.indexOf(node);
+  if (index > 1) {
+    return siblings[index - 1];
   }
   return null;
 }

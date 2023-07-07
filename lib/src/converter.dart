@@ -105,10 +105,10 @@ bool _isFlankedByWhitespace(Node node, String side) {
   var isFlanked = false;
 
   if (side == 'left') {
-    sibling = util.previousSibling(node.node!);
+    sibling = util.previousSibling(node.node);
     regExp = RegExp(r' $');
   } else {
-    sibling = util.nextSibling(node.node!);
+    sibling = util.nextSibling(node.node);
     regExp = RegExp(r'^ ');
   }
 
@@ -131,9 +131,9 @@ String _join(String string1, String string2) {
 }
 
 String _postProcess(String input) {
-  _appendRuleSet.forEach((rule) {
+  for (var rule in _appendRuleSet) {
     input = _join(input, rule.append!());
-  });
+  }
 
   if (input.isNotEmpty) {
     return input
@@ -175,7 +175,7 @@ String _replacementForNode(Node node) {
     var imageSrc = node.getAttribute('src');
     var imageBaseUrl = _customOptions['imageBaseUrl'];
     if (imageSrc != null && imageBaseUrl != null) {
-      var newSrc;
+      String newSrc;
       if (imageBaseUrl.endsWith('/') || imageSrc.startsWith('/')) {
         newSrc = imageBaseUrl + imageSrc;
       } else {

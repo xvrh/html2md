@@ -27,9 +27,9 @@ void updateStyleOptions(Map<String, String>? customOptions) {
 }
 
 class _StyleOption {
-  int defaultIndex;
+  int defaultIndex = 0;
   final List<String> options;
-  _StyleOption(this.options, {this.defaultIndex = 0});
+  _StyleOption(this.options);
   String get style => options[defaultIndex];
   set style(String style) {
     var index = options.indexOf(style);
